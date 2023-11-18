@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:weather_app/MainCard.dart';
+import 'package:weather_app/SmallCard.dart';
 
 void main() {
   runApp(const WeatherApp());
@@ -52,66 +54,59 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
       ),
-      body: Column(
-        children: [],
-      ),
-    );
-  }
-}
-
-class MainCard extends StatelessWidget {
-  String degree, status, iconCode;
-  MainCard({
-    required this.degree,
-    required this.status,
-    required this.iconCode,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 12,
-              sigmaY: 12,
+      body: Padding(
+        padding: EdgeInsets.all(13),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MainCard(
+              degree: '30',
+              status: "Clear",
+              iconCode: "03d",
             ),
-            child: SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 9),
+            SizedBox(
+              height: 18,
+            ),
+            Text(
+              "Weather Forecast",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 27,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 13,
+              ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "$degree°C",
-                      style: TextStyle(
-                        fontSize: 45,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    SmallCard(
+                      time: "09:00",
+                      iconCode: "01d",
+                      degree: "23",
                     ),
-                    Image.network(
-                      scale: .9,
-                      'https://openweathermap.org/img/wn/$iconCode@2x.png',
+                    SmallCard(
+                      time: "09:00",
+                      iconCode: "01d",
+                      degree: "23",
                     ),
-                    Text(
-                      status,
-                      style: TextStyle(
-                        fontSize: 30,
-                      ),
-                    )
+                    SmallCard(
+                      time: "09:00",
+                      iconCode: "01d",
+                      degree: "23",
+                    ),
+                    SmallCard(
+                      time: "09:00",
+                      iconCode: "01d",
+                      degree: "23",
+                    ),
                   ],
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
