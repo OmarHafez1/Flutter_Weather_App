@@ -1,8 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:weather_app/MainCard.dart';
-import 'package:weather_app/SmallCard.dart';
+import 'package:weather_app/Constants.dart';
+import 'package:weather_app/reusable_widgets/AdditionalInformation.dart';
+import 'package:weather_app/reusable_widgets/MainCard.dart';
+import 'package:weather_app/reusable_widgets/SmallCard.dart';
 
 void main() {
   runApp(const WeatherApp());
@@ -39,8 +39,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text("Weather App"),
+        centerTitle: true,
+        title: Text(
+          "Weather App",
+          style: KTitleTextStyle,
         ),
         actions: [
           Padding(
@@ -65,18 +67,15 @@ class _MyHomePageState extends State<MyHomePage> {
               iconCode: "03d",
             ),
             SizedBox(
-              height: 18,
+              height: 17,
             ),
             Text(
               "Weather Forecast",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 27,
-              ),
+              style: KTitleTextStyle,
             ),
             Padding(
               padding: EdgeInsets.symmetric(
-                vertical: 13,
+                vertical: 11,
               ),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -104,6 +103,39 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
+              ),
+            ),
+            SizedBox(
+              height: 17,
+            ),
+            Text(
+              "Additional Information",
+              style: KTitleTextStyle,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 11,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  AdditionalInformation(
+                    iconData: Icons.water_drop,
+                    title: "Humidity",
+                    degree: "90",
+                  ),
+                  AdditionalInformation(
+                    iconData: Icons.air,
+                    title: "Wind SPeed",
+                    degree: "7.67",
+                  ),
+                  AdditionalInformation(
+                    iconData: Icons.beach_access,
+                    title: "Pressure",
+                    degree: "1006",
+                  ),
+                ],
               ),
             ),
           ],
