@@ -15,24 +15,27 @@ class SmallCard extends StatelessWidget {
       elevation: 7,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: 11,
+          vertical: 10,
           horizontal: 30,
         ),
         child: Column(
           children: [
-            const Text(
-              "09:00",
-              style: TextStyle(
+            Text(
+              time,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
             ),
             Image.network(
-              scale: 2,
-              'https://openweathermap.org/img/wn/03d@2x.png',
+              scale: 1.9,
+              'https://openweathermap.org/img/wn/$iconCode@2x.png',
             ),
-            const Text(
-              "301.17",
+            Text(
+              "$degree°C",
+              style: TextStyle(
+                fontSize: 17,
+              ),
             ),
           ],
         ),
