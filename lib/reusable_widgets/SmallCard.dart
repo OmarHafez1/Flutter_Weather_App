@@ -33,7 +33,7 @@ class SmallCard extends StatelessWidget {
             ),
             Text(
               "$degree°C",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 17,
               ),
             ),

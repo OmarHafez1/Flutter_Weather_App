@@ -1,19 +1,20 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:location/location.dart';
 import 'package:weather_app/Constants.dart';
+import 'package:weather_app/location.dart';
 import 'package:weather_app/reusable_widgets/AdditionalInformation.dart';
 import 'package:weather_app/reusable_widgets/MainCard.dart';
 import 'package:weather_app/reusable_widgets/SmallCard.dart';
 
+Location location = Location();
 void main() {
   runApp(const WeatherApp());
 }
 
 const String OPENWEATHER_API_KEY = "c6f22dc15af77877269bfecd0c7be24f";
-LocationData? _locationData;
+Position? _position;
 http.Response? _weatherData, _foreCastData;
 
 //https://api.openweathermap.org/data/2.5/forecast?lat=70&lon=70&appid=$OPENWEATHER_API_KEY
@@ -43,30 +44,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-Future<LocationData> getLocation() async {
-  Location location = new Location();
-
-  PermissionStatus _permissionGranted;
-  LocationData _locationData;
-
-  bool _serviceEnabled = await location.serviceEnabled();
-  if (!_serviceEnabled) {
-    _serviceEnabled = await location.requestService();
-    if (!_serviceEnabled) {
-      throw Exception("location service is not enable");
-    }
-  }
-
-  _permissionGranted = await location.hasPermission();
-  if (_permissionGranted == PermissionStatus.denied) {
-    _permissionGranted = await location.requestPermission();
-    if (_permissionGranted != PermissionStatus.granted) {
-      throw Exception("location permission is not granted");
-    }
-  }
-  return location.getLocation();
-}
-
 Future<http.Response> getWeatherData(double lat, double lon) {
   return http.get(
     Uri.parse(
@@ -83,15 +60,15 @@ Future<http.Response> getForecastData(double lat, double lon) {
 
 Future<(http.Response? weatherData, http.Response? forecastData)>
     fetchWeatherAndForecastData() async {
-  _locationData = await getLocation();
+  _position = await location.getLocation();
   _weatherData =
-      await getWeatherData(_locationData!.latitude!, _locationData!.longitude!);
-  _foreCastData = await getForecastData(
-      _locationData!.latitude!, _locationData!.longitude!);
+      await getWeatherData(_position!.latitude!, _position!.longitude!);
+  _foreCastData =
+      await getForecastData(_position!.latitude!, _position!.longitude!);
   return (_weatherData, _foreCastData);
 }
 
-int convertKelvinToCelsius(double kelvin) {
+int convertKelvinToCelsius(num kelvin) {
   return (kelvin - 273.15).round();
 }
 
@@ -105,8 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return FutureBuilder(
       future: fetchWeatherAndForecastData(),
       builder: (ctx, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return Scaffold(
+        if (snapshot.connectionState != ConnectionState.done ||
+            _position == null ||
+            snapshot.data == null) {
+          return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -125,18 +104,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               actions: [
                 Padding(
-                  padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                  padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
                   child: IconButton(
-                    onPressed: () async {
-                      try {
-                        for (var x in forecastData['list']) {
-                          print(x['dt_txt']);
-                        }
-                      } catch (e) {
-                        print(e);
-                      }
+                    onPressed: () {
+                      setState(() {});
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.refresh,
                     ),
                   ),
@@ -144,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             body: Padding(
-              padding: EdgeInsets.all(13),
+              padding: const EdgeInsets.all(13),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,14 +126,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       weatherData["name"],
                       style: KTitleTextStyle,
                     ),
-                    MainCard(
-                      degree:
-                          convertKelvinToCelsius(weatherData['main']['temp'])
-                              .toString(),
-                      status: weatherData['weather'][0]['main'],
-                      iconCode: weatherData['weather'][0]['icon'],
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                      ),
+                      child: MainCard(
+                        degree:
+                            convertKelvinToCelsius(weatherData['main']['temp'])
+                                .toString(),
+                        status: weatherData['weather'][0]['main'],
+                        iconCode: weatherData['weather'][0]['icon'],
+                      ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 17,
                     ),
                     Text(
@@ -168,8 +146,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: KTitleTextStyle,
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                        top: 11,
+                      padding: const EdgeInsets.only(
+                        top: 8,
                       ),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
@@ -187,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 17,
                     ),
                     Text(
@@ -195,8 +173,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: KTitleTextStyle,
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                        top: 11,
+                      padding: const EdgeInsets.only(
+                        top: 8,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
